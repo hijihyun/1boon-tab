@@ -30,6 +30,9 @@ function loadJson(file, callback) {
     readJsonFile($className+".json", function(text){
         const data = JSON.parse(text);
         console.log(data[0]);
+        // ========== 3. 가져온 데이터를 id=list 에 노출 ==========
+        $list.innerHTML = data[0].title;
+        $list.innerHTML = data[0].img;
     });
 }
 
