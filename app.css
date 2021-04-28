@@ -11,3 +11,7 @@ img {
 li {
     list-style:none;
 }
+
+#load {
+    display: block;
+}
