@@ -22,17 +22,28 @@ for (let i = 0; i < $tabs.length; i++) {
 }
 
 // ========== 2. 각 탭을 누를때마다 해당 API를 사용하여 결과 표시 ==========
+const $list = document.querySelector('#list');
 function loadJson(file, callback) {
     const el = event.currentTarget;
     const $className = el.className.replace(' active', '');
-    const $list = document.querySelector('#list');
 
+    // ========== 3. 가져온 데이터를 id=list 에 노출 ==========
     readJsonFile($className+".json", function(text){
         const data = JSON.parse(text);
         console.log(data[0]);
-        // ========== 3. 가져온 데이터를 id=list 에 노출 ==========
-        $list.innerHTML = data[0].title;
-        $list.innerHTML = data[0].img;
+        
+        // ========== 4. API에서 제목, 링크, 이미지, CP 를 적절히 표시 ==========
+        $list.innerHTML = `
+        <br><br>
+        <li>
+            <a href="${data[0].url}">
+                <img src="${data[0].img}"></img>
+                <br>
+                ${data[0].cp} / <strong>${data[0].title}</strong>
+            </a>
+        </li>
+        <br><br>`;
+        
     });
 }
 
@@ -47,3 +58,19 @@ function readJsonFile(file, callback) {
     }
     rawFile.send(null);
 }
+
+// default
+readJsonFile("recent.json", function(text){
+    const data = JSON.parse(text);
+    console.log(data[0]);
+    $list.innerHTML  = `
+    <br><br>
+    <li>
+        <a href="${data[0].url}">
+            <img src="${data[0].img}"></img>
+            <br>
+            ${data[0].cp} / <strong>${data[0].title}</strong>
+        </a>
+    </li>
+    <br><br>`;
+});
