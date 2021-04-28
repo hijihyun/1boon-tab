@@ -18,4 +18,29 @@ function clickActive(event) {
 // 이벤트 등록
 for (let i = 0; i < $tabs.length; i++) {
     $tabs[i].addEventListener('click', clickActive);
+    $tabs[i].addEventListener('click', loadJson);
+}
+
+// ========== 2. 각 탭을 누를때마다 해당 API를 사용하여 결과 표시 ==========
+function loadJson(file, callback) {
+    const el = event.currentTarget;
+    const $className = el.className.replace(' active', '');
+    const $list = document.querySelector('#list');
+
+    readJsonFile($className+".json", function(text){
+        const data = JSON.parse(text);
+        console.log(data[0]);
+    });
+}
+
+function readJsonFile(file, callback) {
+    const rawFile = new XMLHttpRequest();
+    rawFile.overrideMimeType("application/json");
+    rawFile.open("GET", file, true);
+    rawFile.onreadystatechange = function() {
+        if (rawFile.readyState === 4 && rawFile.status == "200") {
+            callback(rawFile.responseText);
+        }
+    }
+    rawFile.send(null);
 }
