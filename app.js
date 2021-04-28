@@ -21,19 +21,16 @@ function addActive(event) {
     $more.style.display="none";
     $btnMore.style.display="none";
     page = 1;
+
     $tabs[0].className = $tabs[0].className.replace(' active', ''); // default active 제거
+    
     if ($select) {
         $select.className = $select.className.replace(' active', ''); // 선택되었던 active 제거
     }
+
     const el = event.currentTarget;
     el.className += ' active'; // className에 active 추가
     $select = el; // 클릭할 때마다 $select에 저장
-}
-
-// 이벤트 등록
-for (let i = 0; i < $tabs.length; i++) {
-    $tabs[i].addEventListener('click', addActive);
-    $tabs[i].addEventListener('click', loadJson);
 }
 
 // ========== 2. 각 탭을 누를때마다 해당 API를 사용하여 결과 표시 ==========
@@ -48,24 +45,7 @@ function loadJson(file, callback) {
         data = JSON.parse(text);
         
         // ========== 4. API에서 제목, 링크, 이미지, CP 를 적절히 표시 ==========
-        let str = '<br>';
-        let startIndex = getStartIndex(page);
-        for (var i = startIndex; i < startIndex + listNum; i++) {
-            if (data[i]) {
-            str += `
-            <li>
-                <a href="${data[i].url}">
-                    <img src="${data[i].img}"></img>
-                    <br>
-                    <b>${i+1}.</b> ${data[i].cp} / <strong>${data[i].title}</strong>
-                </a>
-            </li>&nbsp;&nbsp;`;
-            }
-            if ((i+1)%2 == 0) {
-                str += `<br>`;
-            }
-        }
-        $list.innerHTML = str;
+        $list.innerHTML = innerHTML();
     });
 }
 
@@ -94,32 +74,6 @@ function moreLoad() {
     $btnMore.style.display="none";
 }
 
-// ========== . 초기 화면 세팅 ==========
-readJsonFile("recent.json", function(text){
-    data = JSON.parse(text);
-    let str = '<br><br>';
-    
-    let startIndex = getStartIndex(page);
-    for (var i = startIndex; i < startIndex + listNum; i++) {
-        if (data[i]) {
-        str += `
-        <li>
-            <a href="${data[i].url}">
-                <img src="${data[i].img}"></img>
-                <br>
-                <b>${i+1}.</b> ${data[i].cp} / <strong>${data[i].title}</strong>
-            </a>
-        </li>&nbsp;&nbsp;`;
-        }
-        if ((i+1)%2 == 0) {
-            str += `<br><br>`;
-        }
-    }
-    $list.innerHTML = str;
-});
-
-load();
-
 // ========== 6. 처음 10개만 보여주고 더보기 클릭이 남은 10개 보여주기 ==========
 function next() {
     if (page === totalPage) return;
@@ -140,6 +94,11 @@ function getStartIndex(page) {
 function moreImg(page) {
     setTimeout(moreLoad,1000);
 
+    $more.innerHTML = innerHTML();
+}
+
+// ========== 7. JS 함수화 ==========
+function innerHTML() {
     let str = '<br>';
     let startIndex = getStartIndex(page);
     for (var i = startIndex; i < startIndex + listNum; i++) {
@@ -157,7 +116,21 @@ function moreImg(page) {
             str += `<br><br>`;
         }
     }
-    $more.innerHTML = str;
+    return str;
 }
 
+// // ========== 8. 이벤트 처리 부분 ==========
+for (let i = 0; i < $tabs.length; i++) {
+    $tabs[i].addEventListener('click', addActive);
+    $tabs[i].addEventListener('click', loadJson);
+}
 $btnMore.addEventListener('click', next);
+
+// ========== 9. 초기 화면 세팅 ==========
+readJsonFile("recent.json", function(text){
+    data = JSON.parse(text);
+    
+    $list.innerHTML = innerHTML();
+});
+
+load();
