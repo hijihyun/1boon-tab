@@ -19,6 +19,7 @@ function addActive(event) {
     $load.style.display="block";
     $list.style.display="none";
     $more.style.display="none";
+    $btnMore.style.display="none";
     page = 1;
     $tabs[0].className = $tabs[0].className.replace(' active', ''); // default active 제거
     if ($select) {
@@ -47,20 +48,21 @@ function loadJson(file, callback) {
         data = JSON.parse(text);
         
         // ========== 4. API에서 제목, 링크, 이미지, CP 를 적절히 표시 ==========
-        let str = '';
+        let str = '<br>';
         let startIndex = getStartIndex(page);
         for (var i = startIndex; i < startIndex + listNum; i++) {
             if (data[i]) {
             str += `
-            <br><br>
             <li>
                 <a href="${data[i].url}">
                     <img src="${data[i].img}"></img>
                     <br>
-                    ${data[i].cp} / <strong>${data[i].title}</strong>
+                    <b>${i+1}.</b> ${data[i].cp} / <strong>${data[i].title}</strong>
                 </a>
-            </li>
-            <br><br>`;
+            </li>&nbsp;&nbsp;`;
+            }
+            if ((i+1)%2 == 0) {
+                str += `<br>`;
             }
         }
         $list.innerHTML = str;
@@ -83,32 +85,34 @@ function readJsonFile(file, callback) {
 function load() {
     $load.style.display="none";
     $list.style.display="block";
-    $more.style.display="none";
+    $btnMore.style.display="block";
 }
 
 function moreLoad() {
     $load.style.display="none";
     $more.style.display="block";
+    $btnMore.style.display="none";
 }
 
 // ========== . 초기 화면 세팅 ==========
 readJsonFile("recent.json", function(text){
     data = JSON.parse(text);
-    let str = '';
+    let str = '<br><br>';
     
     let startIndex = getStartIndex(page);
     for (var i = startIndex; i < startIndex + listNum; i++) {
         if (data[i]) {
         str += `
-        <br><br>
         <li>
             <a href="${data[i].url}">
                 <img src="${data[i].img}"></img>
                 <br>
-                ${data[i].cp} / <strong>${data[i].title}</strong>
+                <b>${i+1}.</b> ${data[i].cp} / <strong>${data[i].title}</strong>
             </a>
-        </li>
-        <br><br>`;
+        </li>&nbsp;&nbsp;`;
+        }
+        if ((i+1)%2 == 0) {
+            str += `<br><br>`;
         }
     }
     $list.innerHTML = str;
@@ -122,6 +126,7 @@ function next() {
 
     $load.style.display="block";
     $more.style.display="none";
+    $btnMore.style.display="none";
 
     page++;
     moreImg(page);
@@ -135,20 +140,21 @@ function getStartIndex(page) {
 function moreImg(page) {
     setTimeout(moreLoad,1000);
 
-    let str = '';
+    let str = '<br>';
     let startIndex = getStartIndex(page);
     for (var i = startIndex; i < startIndex + listNum; i++) {
         if (data[i]) {
         str += `
-        <br><br>
         <li>
             <a href="${data[i].url}">
                 <img src="${data[i].img}"></img>
                 <br>
-                ${data[i].cp} / <strong>${data[i].title}</strong>
+                <b>${i+1}.</b> ${data[i].cp} / <strong>${data[i].title}</strong>
             </a>
-        </li>
-        <br><br>`;
+        </li>&nbsp;&nbsp;`;
+        }
+        if ((i+1)%2 == 0) {
+            str += `<br><br>`;
         }
     }
     $more.innerHTML = str;

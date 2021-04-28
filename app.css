@@ -1,6 +1,8 @@
 .list {
     margin: 10px;
     padding: 10px;
+    margin: auto;
+    width: 1000px;
 }
 
 img {
@@ -10,8 +12,21 @@ img {
 
 li {
     list-style:none;
+    display: inline-block;
+}
+
+strong {
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 300px;
+    white-space: nowrap;
 }
 
 #load {
     display: block;
+}
+
+.btn-default {
+    background-color: salmon;
 }
