@@ -1,7 +1,8 @@
 // ========== 0. 변수선언 ==========
 let $select = null; // 클릭할 때마다 저장되어야 하므로 전역변수
-let $load = document.querySelector('#load');
 let $list = document.querySelector('#list');
+let $load = document.querySelector('#load');
+let $more = document.querySelector('#more');
 const $tabs = document.querySelector('.nav-tabs').children;
 //console.log($tabs); // HTMLCollection(3) [li.active, li, li]
 const tabsLength = $tabs.length;
@@ -17,6 +18,7 @@ const $btnMore = document.querySelector('.btn');
 function addActive(event) {
     $load.style.display="block";
     $list.style.display="none";
+    $more.style.display="none";
     page = 1;
     $tabs[0].className = $tabs[0].className.replace(' active', ''); // default active 제거
     if ($select) {
@@ -46,7 +48,8 @@ function loadJson(file, callback) {
         
         // ========== 4. API에서 제목, 링크, 이미지, CP 를 적절히 표시 ==========
         let str = '';
-        for (let i = 0; i < listNum; i++) {
+        let startIndex = getStartIndex(page);
+        for (var i = startIndex; i < startIndex + listNum; i++) {
             if (data[i]) {
             str += `
             <br><br>
@@ -80,14 +83,21 @@ function readJsonFile(file, callback) {
 function load() {
     $load.style.display="none";
     $list.style.display="block";
+    $more.style.display="none";
+}
+
+function moreLoad() {
+    $load.style.display="none";
+    $more.style.display="block";
 }
 
 // ========== . 초기 화면 세팅 ==========
 readJsonFile("recent.json", function(text){
     data = JSON.parse(text);
     let str = '';
-
-    for (let i = 0; i < listNum; i++) {
+    
+    let startIndex = getStartIndex(page);
+    for (var i = startIndex; i < startIndex + listNum; i++) {
         if (data[i]) {
         str += `
         <br><br>
@@ -109,14 +119,25 @@ load();
 // ========== 6. 처음 10개만 보여주고 더보기 클릭이 남은 10개 보여주기 ==========
 function next() {
     if (page === totalPage) return;
+
+    $load.style.display="block";
+    $more.style.display="none";
+
     page++;
     moreImg(page);
 }
 
+function getStartIndex(page) {
+    var startIndex = (page - 1) * listNum; // 자주 사용되는 패턴
+    return startIndex;
+}
+
 function moreImg(page) {
+    setTimeout(moreLoad,1000);
+
     let str = '';
-    let more = page * listNum;
-    for (let i = 0; i < more; i++) {
+    let startIndex = getStartIndex(page);
+    for (var i = startIndex; i < startIndex + listNum; i++) {
         if (data[i]) {
         str += `
         <br><br>
@@ -130,7 +151,7 @@ function moreImg(page) {
         <br><br>`;
         }
     }
-    $list.innerHTML = str;
+    $more.innerHTML = str;
 }
 
 $btnMore.addEventListener('click', next);
